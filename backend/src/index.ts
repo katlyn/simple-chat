@@ -5,7 +5,9 @@ import http from 'http'
 import { Server } from 'socket.io'
 
 const GROUP_COUNT = Number(process.env.GROUP_COUNT)
-const prompt = 'You and your group have experienced a drastic increase in virtual communication over the last two years. What does your group feel is the most effective method of virtual communication? Why?'
+// const prompt = 'You and your group have experienced a drastic increase in virtual communication over the last two years. What does your group feel is the most effective method of virtual communication? Why?'
+const prompt = 'You and your group have experienced a drastic increase in virtual communication over the last two years. How have virtual groups been effective? How have they been ineffective? Discuss what makes an effective group.'
+
 
 const groups: Set<string>[] = []
 for (let i = 0; i < GROUP_COUNT; ++i) {
@@ -30,7 +32,7 @@ process.on('SIGTERM', () => {
 })
 
 io.on('connection', (socket) => {
-  console.log(socket.id, 'joined!')
+  console.log(`[Connect] ${socket.id} connected`)
 
   let currentGroup = -1
 
@@ -49,7 +51,7 @@ io.on('connection', (socket) => {
       io.to(id).emit('memberJoin', socket.id)
     })
 
-    console.log(socket.id, 'assigned to group', index)
+    console.log(`[Join][Group ${currentGroup}] ${socket.id} assigned`)
   })
 
   socket.on('joinGroup', group => {
@@ -58,13 +60,14 @@ io.on('connection', (socket) => {
     groups[group].forEach(id => {
       io.to(id).emit('memberJoin', socket.id)
     })
-    console.log(socket.id, 'joined to group', group)
+    console.log(`[Join][Group ${currentGroup}] ${socket.id} joined`)
   })
 
   socket.on('createMessage', message => {
     if (currentGroup === -1) {
       return
     }
+    console.log(`[Message][Group ${currentGroup}] ${socket.id} - ${message}`)
     groups[currentGroup].forEach(id => io.to(id).emit('messageCreate', { id: socket.id, message }))
   })
 
@@ -72,11 +75,12 @@ io.on('connection', (socket) => {
     if (currentGroup === -1) {
       return
     }
+    console.log(`[Leave][Group ${currentGroup}] ${socket.id} left`)
     groups[currentGroup].delete(socket.id)
     groups[currentGroup].forEach(id => io.to(id).emit('memberLeave', socket.id))
   })
 })
 
 server.listen(80, () => {
-  console.log('backend listening on *:80')
+  console.log(`[Server] Backend webserver listening`)
 })
