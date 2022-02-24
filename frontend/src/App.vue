@@ -22,7 +22,7 @@ export default class App extends Vue {
   prompt = ''
   messages: Array<{id: string, message: string, system: boolean}> = [{
     id: 'nb',
-    message: 'connecting...',
+    message: 'Connecting...',
     system: true
   }]
 
@@ -38,7 +38,7 @@ export default class App extends Vue {
       this.prompt = s
       this.messages.push({
         id: 'nb',
-        message: `Prompt: ${s}`,
+        message: s,
         system: true
       })
     })
@@ -48,7 +48,7 @@ export default class App extends Vue {
     this.socket.on('groupAssignment', group => {
       this.messages.push({
         id: 'nb',
-        message: `You have been assigned to group ${group}.`,
+        message: `You have been assigned to group ${group + 1}.`,
         system: true
       })
     })
