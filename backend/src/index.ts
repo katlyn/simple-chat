@@ -62,6 +62,9 @@ io.on('connection', (socket) => {
   })
 
   socket.on('createMessage', message => {
+    if (currentGroup === -1) {
+      return
+    }
     groups[currentGroup].forEach(id => io.to(id).emit('messageCreate', { id: socket.id, message }))
   })
 
