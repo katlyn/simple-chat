@@ -6,7 +6,7 @@ import { Server } from 'socket.io'
 
 const GROUP_COUNT = Number(process.env.GROUP_COUNT)
 // const prompt = 'You and your group have experienced a drastic increase in virtual communication over the last two years. What does your group feel is the most effective method of virtual communication? Why?'
-const prompt = 'You and your group have experienced a drastic increase in virtual communication over the last two years. How have virtual groups been effective? How have they been ineffective? Discuss what makes an effective group.'
+const prompt = 'You and your group have experienced a drastic increase in virtual communication over the last two years. How have virtual groups been effective? How have they been ineffective? What factors influenced their effectiveness?'
 
 
 const groups: Set<string>[] = []
