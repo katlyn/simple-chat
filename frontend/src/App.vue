@@ -1,7 +1,7 @@
 <template>
   <MessageScroller :messages="messages" />
   <form @submit.prevent="sendMessage">
-    <input type="text" autofocus placeholder="Message..." v-model="composedMessage" />
+    <input ref="input" type="text" autofocus placeholder="Message..." v-model="composedMessage" />
     <button type="submit">Send</button>
   </form>
 </template>
@@ -28,9 +28,9 @@ export default class App extends Vue {
 
   composedMessage = ''
 
-  join = new Audio('/joinchat.mp3')
-  leave = new Audio('/leftchat.mp3')
-  pop = new Audio('/pop.mp3')
+  join = '/joinchat.mp3'
+  leave = '/leftchat.mp3'
+  pop = '/pop.mp3'
 
   mounted (): void {
     this.socket = io('/')
@@ -54,7 +54,7 @@ export default class App extends Vue {
     })
 
     this.socket.on('messageCreate', message => {
-      this.pop.play()
+      new Audio(this.pop).play()
       this.messages.push({
         ...message,
         system: false
@@ -62,7 +62,7 @@ export default class App extends Vue {
     })
 
     this.socket.on('memberJoin', id => {
-      this.join.play()
+      new Audio(this.join).play()
       this.messages.push({
         id,
         system: true,
@@ -71,7 +71,7 @@ export default class App extends Vue {
     })
 
     this.socket.on('memberLeave', id => {
-      this.leave.play()
+      new Audio(this.leave).play()
       this.messages.push({
         id,
         system: true,
@@ -86,6 +86,7 @@ export default class App extends Vue {
       this.socket.emit('createMessage', this.composedMessage)
       this.composedMessage = ''
     }
+    (this.$refs.input as HTMLInputElement).focus()
   }
 
   unmounted (): void {
@@ -95,13 +96,17 @@ export default class App extends Vue {
 </script>
 
 <style lang="scss">
+html {
+  height: 100%;
+}
 body {
+  height: calc(100% - 1em);
+  padding: 0.5em;
   margin: 0;
 }
 
 #app {
-  height: calc(100vh - 1em);
-  margin: 0.5em;
+  height: 100%;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
